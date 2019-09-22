@@ -5,8 +5,6 @@ namespace app\admin\controller;
 
 
 use app\model\Comments;
-use app\model\User;
-use think\facade\Env;
 
 class Comment extends BaseAdmin
 {
@@ -38,5 +36,22 @@ class Comment extends BaseAdmin
             'count' => $data->count()
         ]);
         return view();
+    }
+
+    public function delete($id){
+        $comment = Comments::get($id);
+        if (empty($comment)){
+            return ['err' => '1','msg' => '删除失败'];
+        }
+        $result = $comment->delete();
+        if ($result) {
+            return ['err' => '0','msg' => '删除成功'];
+        } else {
+            return ['err' => '1','msg' => '删除失败'];
+        }
+    }
+
+    public function deleteAll($ids){
+        Comments::destroy($ids);
     }
 }

@@ -35,11 +35,10 @@ class Books extends Base
     }
 
     public function getHot(){
-        $redis = new_redis();
-        $hots = $redis->zRevRange($this->redis_prefix . 'hot_books', 0, 12, true);
-        $hot_books = array();
-        foreach ($hots as $k => $v) {
-            $hot_books[] = json_decode($k, true);
+        $hot_books = cache('hot_books');
+        if (!$hot_books) {
+            $hot_books = $this->bookService->getHotBooks();
+            cache('hot_books', $hot_books, null, 'redis');
         }
         $result = [
             'success' => 1,

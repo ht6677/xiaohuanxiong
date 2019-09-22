@@ -48,10 +48,33 @@ class Index extends Base
         $most_charged = cache('most_charged');
         if (!$most_charged) {
             $arr = $this->bookService->getMostChargedBook();
-            foreach ($arr as $item){
-                $most_charged[] = $item['book'];
+            if (count($arr) > 0) {
+                foreach ($arr as $item) {
+                    $most_charged[] = $item['book'];
+                }
+            } else {
+                $arr = [];
             }
             cache('most_charged', $most_charged, null, 'redis');
+        }
+
+        $tags = cache('tags');
+        if (!$tags) {
+            $tags = \app\model\Tags::all();
+            cache('tags', $tags, null, 'redis');
+        }
+
+        $catelist = cache('catelist');
+        if (!$catelist) {
+            $catelist = array(); //分类漫画数组
+            $cateItem = array();
+            foreach ($tags as $tag) {
+                $books = $this->bookService->getByTag($tag->tag_name);
+                $cateItem['books'] = $books->toArray();
+                $cateItem['tag'] = ['id' => $tag->id, 'tag_name' => $tag->tag_name];
+                $catelist[] = $cateItem;
+            }
+            cache('catelist', $catelist, null, 'redis');
         }
 
         $this->assign([
@@ -60,12 +83,11 @@ class Index extends Base
             'newest' => $newest,
             'hot' => $hot_books,
             'ends' => $ends,
-            'most_charged' => $most_charged
+            'most_charged' => $most_charged,
+            'tags' => $tags,
+            'catelist' => $catelist
         ]);
-        if (!$this->request->isMobile()) {
-            $tags = \app\model\Tags::all();
-            $this->assign('tags', $tags);
-        }
+
         return view($this->tpl);
     }
 
@@ -73,15 +95,19 @@ class Index extends Base
     {
         $keyword = input('keyword');
         $redis = new_redis();
-        $redis->zIncrBy($this->redis_prefix . 'hot_search', 1, $keyword);
-        $hot_search_json = $redis->zRevRange($this->redis_prefix . 'hot_search:', 1, 4, true);
+        $redis->zIncrBy($this->redis_prefix . 'hot_search', 1, $keyword); //搜索词写入redis热搜
+        $hot_search_json = $redis->zRevRange($this->redis_prefix . 'hot_search', 0, 4, true);
         $hot_search = array();
         foreach ($hot_search_json as $k => $v) {
             $hot_search[] = $k;
         }
         $books = cache('searchresult:' . $keyword);
         if (!$books) {
-            $books = $this->bookService->search($keyword);
+            $num = config('page.search_result_pc');
+            if ($this->request->isMobile()) {
+                $num = config('page.search_result_mobile');
+            }
+            $books = $this->bookService->search($keyword, $num);
             cache('searchresult:' . $keyword, $books, null, 'redis');
         }
         foreach ($books as &$book) {
@@ -91,7 +117,8 @@ class Index extends Base
         $this->assign([
             'books' => $books,
             'count' => count($books),
-            'hot_search' => $hot_search
+            'hot_search' => $hot_search,
+            'keyword' => $keyword
         ]);
         return view($this->tpl);
     }

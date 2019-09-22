@@ -29,7 +29,8 @@ class BaseAdmin extends Controller
         View::share([
             'img_site' => $img_site,
             'version' => $version,
-            'returnUrl' => $this->request->url(true)
+            'returnUrl' => $this->request->url(true),
+            'host_ip' => $_SERVER['SERVER_ADDR']
         ]);
     }
 

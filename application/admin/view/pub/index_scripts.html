@@ -19,7 +19,7 @@
                     }
                 },
                 error: function (data) {
-                    console.log(data.msg);
+                    layer.msg(data);
                 },
             });
         });
@@ -40,7 +40,7 @@
     function member_stop(id) {
         layer.confirm('确认要停用吗？', function (index) {
             $.ajax({
-                type:'post',
+                type: 'post',
                 url: "{:url('disable')}",
                 data: {'id': id},
                 success: function (res) {
@@ -63,7 +63,7 @@
     function member_start(id) {
         layer.confirm('确认要启用吗？', function (index) {
             $.ajax({
-                type:'post',
+                type: 'post',
                 url: "{:url('enable')}",
                 data: {'id': id},
                 success: function (res) {
@@ -87,43 +87,71 @@
             type: 1,
             title: false,
             area: ['630px', '360px'],
-            content: '<p></p><p style="margin-left: 15px;">检查更新中，请耐心等待</p>'
+            content: '<p></p><p style="padding-left:15px;font-weight: 400;color:#999;">检查更新中，请耐心等待</p>'
         });
-        $.ajax({
-            type: 'get',
-            url: "/admin/index/checkupdate",
-            success: function (res) {
-                $('.layui-layer-content').html(res);
-            }
-        })
+        ws = new WebSocket('ws://{$host_ip}:2346');
+        ws.onmessage = function (e) {
+            $('.layui-layer-content').append(e.data);
+        }
+
     }
 
-    function runDatetimePicker(){
+    function runDatetimePicker() {
         $("#search-datetime-start").datetimepicker({
-            language:  'zh-cn',
+            language: 'zh-cn',
             format: 'yyyy-mm-dd hh:ii',
             minView: "month",
-            todayBtn:  1,
+            todayBtn: 1,
             autoclose: 1,
-            endDate : new Date(),
-        }).on('changeDate', function(event) {
+            endDate: new Date(),
+        }).on('changeDate', function (event) {
             event.preventDefault();
             event.stopPropagation();
             var startTime = event.date;
-            $('#search-datetime-end').datetimepicker('setStartDate',startTime);
+            $('#search-datetime-end').datetimepicker('setStartDate', startTime);
         });
         $("#search-datetime-end").datetimepicker({
-            language:  'zh-cn',
+            language: 'zh-cn',
             format: 'yyyy-mm-dd hh:ii',
             minView: "month",
-            todayBtn:  1,
+            todayBtn: 1,
             autoclose: 1,
-            endDate : new Date(),
-        }).on('changeDate', function(event) {
+            endDate: new Date(),
+        }).on('changeDate', function (event) {
             event.preventDefault();
             event.stopPropagation();
             var endTime = event.date;
-            $("#search-datetime-start").datetimepicker('setEndDate',endTime);
+            $("#search-datetime-start").datetimepicker('setEndDate', endTime);
         });
+    }
+
+    $('#cbx').click(function () {
+        var cbxs = $('.cbx');
+        var flag = $('#cbx').prop("checked");
+        $.each(cbxs, function (index, value) {
+            $(value).prop("checked", flag);
+        })
+    })
+
+    function delAll(tip, controller) {
+        var cbxs = $('.cbx:checked');
+        var arr = [];
+        $.each(cbxs, function (index, value) {
+            arr.push($(value).attr('data-val'));
+        })
+        if (arr.length <= 0) {
+            layer.msg(tip, {icon: 2});
+        } else {
+            $.ajax({
+                type: 'post',
+                url: '/admin/' + controller + '/deleteAll',
+                data: {ids: arr},
+                success(res) {
+                    layer.msg('批量删除成功', {icon: 1, time: 1000}, function () {
+                        location.reload();
+                    });
+                }
+            })
+        }
     }
 </script>

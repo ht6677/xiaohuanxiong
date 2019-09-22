@@ -47,7 +47,20 @@
         </li>
         {/volist}
     </ul>
-    {$books|raw}
+    <div class="pagination">
+        {if $page.total_page > 1}
+            {if $page.current_page == 1}
+            <a class="paginate-disabled-btn" href="#"> > </a>
+            {else/}
+            <a class="paginate-btn" href="/booklist?page={$page.current_page-1}{$param}" title="上一页"> < </a>
+            {/if}
+            {if $page.current_page == $page.last_page}
+            <a class="paginate-disabled-btn" href="#"> < </a>
+            {else/}
+            <a class="paginate-btn" href="/booklist?page={$page.current_page+1}{$param}" title="下一页"> < </a>
+            {/if}
+        {/if}
+    </div>
 </div>
 
 <script>

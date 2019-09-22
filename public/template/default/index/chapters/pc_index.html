@@ -24,6 +24,9 @@
             padding: 4px 9px;
         }
     </style>
+    {if $next != "null"}
+    <link rel="prefetch prerender" href="/chapter/{$next.id}" />
+    {/if}
 </head>
 
 <body class="read-view">
@@ -68,7 +71,7 @@
     <div class="row">
         <div class="crumbs">
             <a href="/" title="{$site_name}">{$site_name}</a> &gt;
-            <a class="comic-name" href="/book/{$chapter.book_id}" title="{$chapter.book.book_name}">{$chapter.book.book_name}</a>
+            <a class="comic-name" href="/book/{$id_salt}{$chapter.book_id}" title="{$chapter.book.book_name}">{$chapter.book.book_name}</a>
         </div>
         <h1 class="title">{$chapter.book.book_name} {$chapter.chapter_name}</h1>
         <div class="shareBtn">

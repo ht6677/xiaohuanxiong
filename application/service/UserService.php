@@ -52,7 +52,8 @@ class UserService extends Controller
             $data = User::onlyTrashed()->where($where)->order($orderBy, $order);
         }
         $financeService = new FinanceService();
-        $users = $data->paginate(5, false,
+        $page = config('page.back_end_page');
+        $users = $data->paginate($page, false,
             [
                 'query' => request()->param(),
                 'type' => 'util\AdminPage',

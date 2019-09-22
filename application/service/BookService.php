@@ -11,29 +11,34 @@ namespace app\service;
 use app\index\controller\Base;
 use app\model\Book;
 use app\model\Chapter;
-use app\model\Clicks;
 use app\model\UserBuy;
 use think\Db;
 
 class BookService extends Base
 {
-    public function getPagedBooks($order = 'id', $where = '1=1', $num = 5)
+    public function getPagedBooks($order = 'id', $where = '1=1', $pc_page, $mobile_page)
     {
-        $type = 'util\Page';
+        $num = $pc_page;
         if ($this->request->isMobile()) {
-            $type = 'util\MPage';
+            $num = $mobile_page;
         }
-        $books = Book::where($where)->with('chapters')->order($order, 'desc')
-            ->paginate($num, false,
-                [
-                    'query' => request()->param(),
-                    'type' => $type,
-                    'var_page' => 'page',
-                ]);
-        foreach ($books as &$book) {
+        $data = Book::where($where)->with('chapters')->order($order, 'desc')
+            ->paginate($num, false);
+        foreach ($data as &$book) {
             $book['chapter_count'] = count($book->chapters);
         }
-        return $books;
+        $books = $data->toArray();
+        return [
+            'books' => $books['data'],
+            'page' => [
+                'total' => $books['total'],
+                'per_page' => $books['per_page'],
+                'current_page' => $books['current_page'],
+                'last_page' => $books['last_page'],
+                'total_page' => (int)ceil($books['total'] / $books['per_page']),
+                'query' => request()->param()
+            ]
+        ];
     }
 
     public function getPagedBooksAdmin($status, $where = '1=1')
@@ -43,8 +48,9 @@ class BookService extends Base
         } else {
             $data = Book::onlyTrashed()->where($where);
         }
+        $page = config('page.back_end_page');
         $books = $data->with('author,chapters')->order('id', 'desc')
-            ->paginate(5, false,
+            ->paginate($page, false,
                 [
                     'query' => request()->param(),
                     'type' => 'util\AdminPage',
@@ -57,7 +63,7 @@ class BookService extends Base
         ];
     }
 
-    public function getBooks($order = 'update_time', $where = '1=1', $num = 6)
+    public function getBooks($order = 'last_time', $where = '1=1', $num = 6)
     {
         $books = Book::where($where)->with('author,chapters')
             ->limit($num)->order($order, 'desc')->select();
@@ -72,16 +78,20 @@ class BookService extends Base
     {
         $data = UserBuy::with(['book' => ['author']])->field('book_id,sum(money) as sum')
             ->group('book_id')->select();
-        foreach ($data as &$item) {
-            $chapters = Chapter::where('book_id', '=', $item['book_id'])->select();
-            $book = $item['book'];
-            $book['chapter_count'] = count($chapters);
-            $book['taglist'] = explode('|', $item['book']['tags']);
-            $item['book'] = $book;
+        if (count($data) > 0) {
+            foreach ($data as &$item) {
+                $chapters = Chapter::where('book_id', '=', $item['book_id'])->select();
+                $book = $item['book'];
+                $book['chapter_count'] = count($chapters);
+                $book['taglist'] = explode('|', $item['book']['tags']);
+                $item['book'] = $book;
+            }
+            $arr = $data->toArray();
+            array_multisort(array_column($arr, 'sum'), SORT_DESC, $arr);
+            return $arr;
+        } else {
+            return [];
         }
-        $arr = $data->toArray();
-        array_multisort(array_column($arr, 'sum'), SORT_DESC, $arr);
-        return $arr;
     }
 
     public function getBooksById($ids)
@@ -111,20 +121,18 @@ class BookService extends Base
         return $books;
     }
 
-    public function getRandBooks()
+    public function getByName($name)
     {
-        $books = Db::query('SELECT ad1.id,book_name,summary,cover_url FROM ' . $this->prefix . 'book AS ad1 JOIN 
-(SELECT ROUND(RAND() * ((SELECT MAX(id) FROM ' . $this->prefix . 'book)-(SELECT MIN(id) FROM ' . $this->prefix . 'book))+(SELECT MIN(id) FROM ' . $this->prefix . 'book)) AS id)
- AS t2 WHERE ad1.id >= t2.id ORDER BY ad1.id LIMIT 10');
+        return Book::where('book_name', '=', $name)->find();
+    }
+
+    public function getByTag($tag)
+    {
+        $books = Book::where('tags', 'like', '%' . $tag . '%')->select();
         foreach ($books as &$book) {
             $book['chapter_count'] = Chapter::where('book_id', '=', $book['id'])->count();
         }
         return $books;
-    }
-
-    public function getByName($name)
-    {
-        return Book::where('book_name', '=', $name)->find();
     }
 
     public function getRand($num)
@@ -134,35 +142,43 @@ class BookService extends Base
 FROM ' . $this->prefix . 'book AS ad1 JOIN (SELECT ROUND(RAND() * ((SELECT MAX(id) FROM ' . $this->prefix . 'book)-(SELECT MIN(id) FROM ' . $this->prefix . 'book))+(SELECT MIN(id) FROM ' . $this->prefix . 'book)) AS id)
  AS t2 WHERE ad1.id >= t2.id ORDER BY ad1.id LIMIT ' . $num . ') as a
  INNER JOIN author as b on a.author_id = b.id');
+        foreach ($books as &$book) {
+            $book['chapter_count'] = Chapter::where('book_id', '=', $book['id'])->count();
+        }
         return $books;
     }
 
-    public function getNewest()
-    {
-        return Book::with('author')->limit(3)->order('update_time', 'desc')->select();
-    }
-
-    public function search($keyword)
+    public function search($keyword, $num)
     {
         return Db::query(
-            "select * from " . $this->prefix . "book where match(book_name,summary,author_name,nick_name) 
-            against ('" . $keyword . "' IN NATURAL LANGUAGE MODE)"
+            "select * from " . $this->prefix . "book where delete_time=0 and match(book_name,summary,author_name,nick_name) 
+            against ('" . $keyword . "' IN NATURAL LANGUAGE MODE) LIMIT " . $num
         );
     }
 
     public function getHotBooks($date = '1900-01-01', $num = 10)
     {
-        $data = Db::query("SELECT book_id,SUM(clicks) as clicks FROM xwx_clicks WHERE cdate>=:cdate
+        $data = Db::query("SELECT book_id,SUM(clicks) as clicks FROM " . $this->prefix . "clicks WHERE cdate>=:cdate
  GROUP BY book_id ORDER BY clicks DESC LIMIT :num", ['cdate' => $date, 'num' => $num]);
         $books = array();
         foreach ($data as $val) {
             $book = Book::with('chapters')->find($val['book_id']);
-            if ($book){
+            if ($book) {
                 $book['chapter_count'] = count($book->chapters);
                 $book['taglist'] = explode('|', $book->tags);
-                array_push($books,$book);
+                array_push($books, $book);
             }
         }
         return $books;
+    }
+
+    public function getClicks($book_id)
+    {
+        $clicks = Db::query("SELECT click FROM(SELECT book_id,
+ sum(clicks) as click FROM " . $this->prefix . "clicks GROUP BY book_id) as a WHERE book_id=:book_id", ['book_id' => $book_id]);
+        if (empty($clicks)) {
+            return 0;
+        }
+        return $clicks[0]['click'];
     }
 }

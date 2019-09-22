@@ -30,21 +30,15 @@ class Photos extends BaseAdmin
         $chapter = Chapter::get($chapter_id);
         $book_id = input('book_id');
         $book = Book::get($book_id);
-        $data = Photo::where('chapter_id','=',$chapter_id);
-        $photos = $data->order('pic_order','desc')
-            ->paginate(5,false,
-                [
-                    'query' => request()->param(),
-                    'type'     => 'util\AdminPage',
-                    'var_page' => 'page',
-                ]);
+        $page = config('page.back_end_page');
+        $data = $this->photoService->getAdminPaged($chapter_id, $page);
         $this->assign([
-            'photos'=>$photos,
+            'photos'=>$data['photos'],
             'chapter_id'=>$chapter_id,
             'book_id'=>$book_id,
             'book_name'=>$book->book_name,
             'chapter_name'=>$chapter->chapter_name,
-            'count' => $data->count(),
+            'count' => $data['count'],
         ]);
         return view();
     }

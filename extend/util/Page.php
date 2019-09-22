@@ -9,13 +9,17 @@
 namespace Util;
 
 
+use think\facade\Config;
 use think\Paginator;
 
 class Page extends Paginator
 {
+    protected $tpl;
+
     public function __construct($items, $listRows, $currentPage = null, $total = null, $simple = false, array $options = [])
     {
         parent::__construct($items, $listRows, $currentPage, $total, $simple, $options);
+        $this->tpl = Config::get('site.tpl');
     }
 
     //首页
@@ -27,21 +31,40 @@ class Page extends Paginator
     //上一页
     protected function prev()
     {
-        if ($this->currentPage() > 1) {
-            return "<li><a id='prevPage' href='" . $this->url($this->currentPage - 1) . "' title='上一页'>&lt;</a></li>";
+        if ($this->tpl == 'zymk') {
+            if ($this->currentPage() > 1) {
+                return '<a class="prev" href="' . $this->url($this->currentPage - 1) . '"><i class="ift-prev"></i></a>';
+            } else {
+                return '<span class="prev"><i class="ift-prev"></i></span>';
+            }
         } else {
-            return "<li><a href='#'>&lt;</a></li>";
+            if ($this->currentPage() > 1) {
+                return "<li><a id='prevPage' href='" . $this->url($this->currentPage - 1) . "' title='上一页'>&lt;</a></li>";
+            } else {
+                return "<li><a href='#'>&lt;</a></li>";
+            }
         }
+
     }
 
     //下一页
     protected function next()
     {
-        if ($this->hasMore) {
-            return "<li><a id='nextPage' href='" . $this->url($this->currentPage + 1) . "' title='下一页'>&gt;</a></li>";
+        if ($this->tpl == 'zymk') {
+            if ($this->hasMore) {
+                return '<a class="next" href="' . $this->url($this->currentPage + 1) . '"><i class="ift-next"></i></a>';
+            } else {
+                return '<span class="next"><i class="ift-next"></i></span>';
+            }
+
         } else {
-            return "<li><a href='#'>&gt;</a></li>";
+            if ($this->hasMore) {
+                return "<li><a id='nextPage' href='" . $this->url($this->currentPage + 1) . "' title='下一页'>&gt;</a></li>";
+            } else {
+                return "<li><a href='#'>&gt;</a></li>";
+            }
         }
+
     }
 
     //尾页
@@ -130,35 +153,48 @@ class Page extends Paginator
     /**
      * 生成一个可点击的按钮
      *
-     * @param  string $url
-     * @param  int $page
+     * @param string $url
+     * @param int $page
      * @return string
      */
     protected function getAvailablePageWrapper($url, $page)
     {
-        return '<li><a href="' . htmlentities($url) . '" title="第"' . $page . '"页" >' . $page . '</a></li>';
+        if ($this->tpl == 'zymk') {
+            return '<a href="' . htmlentities($url) . '">' . $page . '</a>';
+        } else {
+            return '<li><a href="' . htmlentities($url) . '" title="第"' . $page . '"页" >' . $page . '</a></li>';
+        }
     }
 
     /**
      * 生成一个禁用的按钮
      *
-     * @param  string $text
+     * @param string $text
      * @return string
      */
     protected function getDisabledTextWrapper($text)
     {
-        return '<li><a href="#">' . $text . '</a></li>';
+        if ($this->tpl == 'zymk') {
+            return '<span class="active">' . $text . '</span>';
+        } else {
+            return '<li><a href="#">' . $text . '</a></li>';
+        }
+
     }
 
     /**
      * 生成一个激活的按钮
      *
-     * @param  string $text
+     * @param string $text
      * @return string
      */
     protected function getActivePageWrapper($text)
     {
-        return '<li><a href="" class="active">' . $text . '</a></li>';
+        if ($this->tpl == 'zymk') {
+            return '<span class="active">' . $text . '</span>';
+        } else {
+            return '<li><a href="" class="active">' . $text . '</a></li>';
+        }
     }
 
     /**
@@ -174,7 +210,7 @@ class Page extends Paginator
     /**
      * 批量生成页码按钮.
      *
-     * @param  array $urls
+     * @param array $urls
      * @return string
      */
     protected function getUrlLinks(array $urls)
@@ -189,8 +225,8 @@ class Page extends Paginator
     /**
      * 生成普通页码按钮
      *
-     * @param  string $url
-     * @param  int $page
+     * @param string $url
+     * @param int $page
      * @return string
      */
     protected function getPageLinkWrapper($url, $page)

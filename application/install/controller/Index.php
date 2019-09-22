@@ -91,9 +91,9 @@ class Index extends Controller
     {
         if ($this->request->isPost()) {
             if (!is_writable(App::getRootPath() . 'config/database.php')) {
-                return $this->error('[app/config/database.php]无读写权限！');
+                return json(['code' => 0, 'msg' => '[app/config/database.php]无读写权限！']);
             }
-            $data = $this->request->only(['hostname', 'hostport', 'database', 'username', 'prefix', 'cover', 'password']);
+            $data = $this->request->only(['hostname', 'hostport', 'database', 'username', 'prefix', 'password']);
             $data['type'] = 'mysql';
 
             $rule = [
@@ -102,19 +102,17 @@ class Index extends Controller
                 'database|数据库名称' => 'require',
                 'username|数据库账号' => 'require',
                 'password|数据库密码' => 'require',
-                'prefix|数据库前缀' => 'require|alphaNum',
-                'cover|覆盖数据库' => 'require|in:0,1',
+                'prefix|数据库前缀' => 'require|alphaNum'
             ];
             $validate = $this->validate($data, $rule);
             if (true !== $validate) {
-                return $this->error($validate);
+                return json(['code' => 0, 'msg' => $validate]);
             }
-            $cover = $data['cover'];
-            unset($data['cover']);
+
             $config = include App::getRootPath() . 'config/database.php';
             foreach ($data as $k => $v) {
                 if (array_key_exists($k, $config) === false) {
-                    return $this->error('参数' . $k . '不存在！');
+                    return json(['code' => 0, 'msg' => '参数' . $k . '不存在！']);
                 }
             }
             // 不存在的数据库会导致连接失败
@@ -125,45 +123,52 @@ class Index extends Controller
             $db_connect = Db::connect($data);
             // 检测数据库连接
             try {
-                $db_connect->execute('select version()');
+                $version = $db_connect->query('select version()');
+                $num = str_replace('.', '', $version);
+                if ($num < '570') {
+                    return json(['code' => 0, 'msg' => 'MySQL版本不能低于5.7']);
+                }
             } catch (\Exception $e) {
-                $this->error('数据库连接失败，请检查数据库配置！');
+                return json(['code' => 0, 'msg' => '数据库连接失败，请检查数据库配置！']);
             }
+
 
             // 生成数据库配置文件
             $data['database'] = $database;
             self::make_database($data);
 
-            if ($cover) { //如果选择覆盖数据库
-               $check = $db_connect->execute('SELECT * FROM information_schema.schemata WHERE schema_name="' . $database . '"');
-               if (!$check) {
-                   // 创建数据库
-                   if (!$db_connect->execute("CREATE DATABASE IF NOT EXISTS `{$database}` DEFAULT CHARACTER SET utf8")) {
-                       return $this->error($db_connect->getError());
-                   }
-               }
+            $check = $db_connect->execute('SELECT * FROM information_schema.schemata WHERE schema_name="' . $database . '"');
+            if (!$check) {
+                // 创建数据库
+                if (!$db_connect->execute("CREATE DATABASE IF NOT EXISTS `{$database}` DEFAULT CHARACTER SET utf8")) {
+                    return json(['code' => 0, 'msg' => $db_connect->getError()]);
+                }
+            } 
+            // else {
+            //     return json(['code' => 0, 'msg' => '数据库已存在']);
+            // }
 
-                // 导入系统初始数据库结构
-                // 导入SQL
-                $sql_file = App::getRootPath() . 'application/install/sql/install.sql';
-                if (file_exists($sql_file)) {
-                    $sql = file_get_contents($sql_file);
-                    $sql_list = xwxcms_parse_sql($sql, 0, ['xwx_' => $config['prefix']]);
-                    if ($sql_list) {
-                        $sql_list = array_filter($sql_list);
-                        foreach ($sql_list as $v) {
-                            try {
-                                Db::execute($v);
-                            } catch (\Exception $e) {
-                                halt('导入SQL失败，请检查install.sql的语句是否正确。' . $e);
-                            }
+            // 导入系统初始数据库结构
+            // 导入SQL
+            $sql_file = App::getRootPath() . 'application/install/sql/install.sql';
+            if (file_exists($sql_file)) {
+                $sql = file_get_contents($sql_file);
+                $sql_list = xwxcms_parse_sql($sql, 0, ['xwx_' => $config['prefix']]);
+                if ($sql_list) {
+                    $sql_list = array_filter($sql_list);
+                    foreach ($sql_list as $v) {
+                        try {
+                            Db::execute($v);
+                        } catch (\Exception $e) {
+                            return json(['code' => 0, 'msg' => '导入SQL失败，请检查install.sql的语句是否正确。' . $e]);
                         }
                     }
                 }
             }
-            return $this->success('数据库连接成功', '');
+
+            return json(['code' => 1, 'msg' => '数据库连接成功', '']);
         } else {
-            return $this->error('非法访问');
+            return json(['code' => 1, 'msg' => '非法访问']);
         }
     }
 

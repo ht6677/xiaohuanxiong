@@ -29,6 +29,8 @@
             <div class="panel-body">
                 <div class="clearfix">
 							<span class="f-l">
+                                 <a href="javascript:;" onclick="delAll('请选择要删除的作者','authors')" class="btn btn-danger radius"><i
+                                         class="Hui-iconfont">&#xe6e2;</i> 批量删除</a>
                                 <a class="btn btn-primary radius" onclick="editCreate('作者新增','{:url(\'create\')}')">
                                     <i class="Hui-iconfont">&#xe600;</i> 添加作者
                                 </a>
@@ -39,6 +41,7 @@
                     <table class="table table-border table-bordered table-bg table-hover table-sort">
                         <thead>
                         <tr class="text-c">
+                            <th width="40"><input id="cbx" type="checkbox" value=""></th>
                             <th width="80">ID</th>
                             <th>作者名</th>
                             <th>创建时间</th>
@@ -50,6 +53,7 @@
                         <tbody>
                         {volist name="authors" id="vo"}
                         <tr class="text-c">
+                            <td><input data-val="{$vo.id}" class="cbx" type="checkbox" value=""></td>
                             <td>{$vo.id}</td>
                             <td>{$vo.author_name}</td>
                             <td>{$vo.create_time|date='Y-m-d H:i'}</td>

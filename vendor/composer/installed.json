@@ -12,7 +12,13 @@
             "type": "zip",
             "url": "https://api.github.com/repos/guzzle/guzzle/zipball/407b0cb880ace85c9b63c5f9551db498cb2d50ba",
             "reference": "407b0cb880ace85c9b63c5f9551db498cb2d50ba",
-            "shasum": ""
+            "shasum": "",
+            "mirrors": [
+                {
+                    "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                    "preferred": true
+                }
+            ]
         },
         "require": {
             "guzzlehttp/promises": "^1.0",
@@ -79,7 +85,13 @@
             "type": "zip",
             "url": "https://api.github.com/repos/guzzle/promises/zipball/a59da6cf61d80060647ff4d3eb2c03a2bc694646",
             "reference": "a59da6cf61d80060647ff4d3eb2c03a2bc694646",
-            "shasum": ""
+            "shasum": "",
+            "mirrors": [
+                {
+                    "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                    "preferred": true
+                }
+            ]
         },
         "require": {
             "php": ">=5.5.0"
@@ -132,7 +144,13 @@
             "type": "zip",
             "url": "https://api.github.com/repos/guzzle/psr7/zipball/9f83dded91781a01c63574e387eaa769be769115",
             "reference": "9f83dded91781a01c63574e387eaa769be769115",
-            "shasum": ""
+            "shasum": "",
+            "mirrors": [
+                {
+                    "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                    "preferred": true
+                }
+            ]
         },
         "require": {
             "php": ">=5.4.0",
@@ -201,7 +219,13 @@
             "type": "zip",
             "url": "https://api.github.com/repos/php-fig/http-message/zipball/f6561bf28d520154e4b0ec72be95418abe6d9363",
             "reference": "f6561bf28d520154e4b0ec72be95418abe6d9363",
-            "shasum": ""
+            "shasum": "",
+            "mirrors": [
+                {
+                    "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                    "preferred": true
+                }
+            ]
         },
         "require": {
             "php": ">=5.3.0"
@@ -253,7 +277,13 @@
             "type": "zip",
             "url": "https://api.github.com/repos/ralouphie/getallheaders/zipball/5601c8a83fbba7ef674a7369456d12f1e0d0eafa",
             "reference": "5601c8a83fbba7ef674a7369456d12f1e0d0eafa",
-            "shasum": ""
+            "shasum": "",
+            "mirrors": [
+                {
+                    "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                    "preferred": true
+                }
+            ]
         },
         "require": {
             "php": ">=5.3"
@@ -295,7 +325,13 @@
             "type": "zip",
             "url": "https://api.github.com/repos/top-think/framework/zipball/c53c0c6132022a87e8ee9c4109939eaf9a8a7adb",
             "reference": "c53c0c6132022a87e8ee9c4109939eaf9a8a7adb",
-            "shasum": ""
+            "shasum": "",
+            "mirrors": [
+                {
+                    "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                    "preferred": true
+                }
+            ]
         },
         "require": {
             "php": ">=5.6.0",
@@ -348,7 +384,13 @@
             "type": "zip",
             "url": "https://api.github.com/repos/top-think/think-captcha/zipball/54c8a51552f99ff9ea89ea9c272383a8f738ceee",
             "reference": "54c8a51552f99ff9ea89ea9c272383a8f738ceee",
-            "shasum": ""
+            "shasum": "",
+            "mirrors": [
+                {
+                    "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                    "preferred": true
+                }
+            ]
         },
         "require": {
             "topthink/framework": "5.1.*"
@@ -389,7 +431,13 @@
             "type": "zip",
             "url": "https://api.github.com/repos/top-think/think-image/zipball/8586cf47f117481c6d415b20f7dedf62e79d5512",
             "reference": "8586cf47f117481c6d415b20f7dedf62e79d5512",
-            "shasum": ""
+            "shasum": "",
+            "mirrors": [
+                {
+                    "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                    "preferred": true
+                }
+            ]
         },
         "require": {
             "ext-gd": "*"
@@ -431,7 +479,13 @@
             "type": "zip",
             "url": "https://api.github.com/repos/top-think/think-installer/zipball/f5400a12c60e513911aef41fe443fa6920952675",
             "reference": "f5400a12c60e513911aef41fe443fa6920952675",
-            "shasum": ""
+            "shasum": "",
+            "mirrors": [
+                {
+                    "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                    "preferred": true
+                }
+            ]
         },
         "require": {
             "composer-plugin-api": "^1.0"
@@ -459,6 +513,160 @@
                 "name": "yunwuxin",
                 "email": "448901948@qq.com"
             }
+        ]
+    },
+    {
+        "name": "topthink/think-worker",
+        "version": "v2.0.12",
+        "version_normalized": "2.0.12.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/top-think/think-worker.git",
+            "reference": "922d8c95e2f095e0da66d18b9e3fbbfd8de70a3f"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/top-think/think-worker/zipball/922d8c95e2f095e0da66d18b9e3fbbfd8de70a3f",
+            "reference": "922d8c95e2f095e0da66d18b9e3fbbfd8de70a3f",
+            "shasum": "",
+            "mirrors": [
+                {
+                    "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                    "preferred": true
+                }
+            ]
+        },
+        "require": {
+            "ext-fileinfo": "*",
+            "topthink/framework": "^5.1.18",
+            "topthink/think-installer": "^2.0",
+            "workerman/gateway-worker": "^3.0.0",
+            "workerman/workerman": "^3.5.0"
+        },
+        "time": "2019-03-08T11:22:34+00:00",
+        "type": "think-extend",
+        "extra": {
+            "think-config": {
+                "worker": "src/config/worker.php",
+                "worker_server": "src/config/server.php",
+                "gateway_worker": "src/config/gateway.php"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "think\\worker\\": "src"
+            },
+            "files": [
+                "src/command.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "Apache-2.0"
+        ],
+        "authors": [
+            {
+                "name": "liu21st",
+                "email": "liu21st@gmail.com"
+            }
+        ],
+        "description": "workerman extend for thinkphp5.1"
+    },
+    {
+        "name": "workerman/gateway-worker",
+        "version": "v3.0.13",
+        "version_normalized": "3.0.13.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/walkor/GatewayWorker.git",
+            "reference": "38b44c95f21cd340b5a9cff3987ddb2abb9a2a38"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/walkor/GatewayWorker/zipball/38b44c95f21cd340b5a9cff3987ddb2abb9a2a38",
+            "reference": "38b44c95f21cd340b5a9cff3987ddb2abb9a2a38",
+            "shasum": "",
+            "mirrors": [
+                {
+                    "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                    "preferred": true
+                }
+            ]
+        },
+        "require": {
+            "workerman/workerman": ">=3.1.8"
+        },
+        "time": "2019-07-02T11:55:24+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "GatewayWorker\\": "./src"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "homepage": "http://www.workerman.net",
+        "keywords": [
+            "communication",
+            "distributed"
+        ]
+    },
+    {
+        "name": "workerman/workerman",
+        "version": "v3.5.20",
+        "version_normalized": "3.5.20.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/walkor/Workerman.git",
+            "reference": "4d590130310a8d7632f807120c3ca1c0f55ed0d7"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/walkor/Workerman/zipball/4d590130310a8d7632f807120c3ca1c0f55ed0d7",
+            "reference": "4d590130310a8d7632f807120c3ca1c0f55ed0d7",
+            "shasum": "",
+            "mirrors": [
+                {
+                    "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                    "preferred": true
+                }
+            ]
+        },
+        "require": {
+            "php": ">=5.3"
+        },
+        "suggest": {
+            "ext-event": "For better performance. "
+        },
+        "time": "2019-07-02T10:23:18+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Workerman\\": "./"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "walkor",
+                "role": "Developer",
+                "email": "walkor@workerman.net",
+                "homepage": "http://www.workerman.net"
+            }
+        ],
+        "description": "An asynchronous event driven PHP framework for easily building fast, scalable network applications.",
+        "homepage": "http://www.workerman.net",
+        "keywords": [
+            "asynchronous",
+            "event-loop"
         ]
     }
 ]

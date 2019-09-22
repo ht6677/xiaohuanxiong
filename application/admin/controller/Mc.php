@@ -18,13 +18,12 @@ class Mc extends BaseAdmin
                 'query' => request()->param(),
                 'type' => 'util\AdminPage',
                 'var_page' => 'page',
-            ]);
-//        ->each(function ($item, $key) {
-//            $dir = Env::get('root_path') . '/public/static/upload/message/' . $item['id'] . '/';
-//            $item['content'] = file_get_contents($dir . 'msg.txt'); //获取用户留言内容
-//            $user = User::get($item['msg_key']);//根据留言用户ID查出用户
-//            $item['user'] = $user;
-//        });
+            ])->each(function ($item, $key) {
+            //$dir = Env::get('root_path') . '/public/static/upload/message/' . $item['id'] . '/';
+            //$item['content'] = file_get_contents($dir . 'msg.txt'); //获取用户留言内容
+            $user = User::get($item['msg_key']);//根据留言用户ID查出用户
+            $item['user'] = $user;
+        });
         $this->assign([
             'msgs' => $msgs,
             'count' => $data->count()
@@ -67,7 +66,22 @@ class Mc extends BaseAdmin
     }
 
     public function delete($id){
-        Message::destroy($id);
-        return ['err' => '0','msg' => '删除成功'];
+        $message=Message::get($id);
+        if (empty($message)){
+            return ['err' => '1','msg' => '删除失败'];
+        }
+        $result=$message->delete();
+        if ($result){
+
+        }
+        if ($result) {
+            return ['err' => '0','msg' => '删除成功'];
+        } else {
+            return ['err' => '1','msg' => '删除失败'];
+        }
+    }
+
+    public function deleteAll($ids){
+        Message::destroy($ids);
     }
 }

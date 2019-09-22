@@ -3,9 +3,11 @@
 namespace app\admin\controller;
 
 use GuzzleHttp\Client;
+use think\Exception;
 use think\facade\App;
 use think\facade\Cache;
 use think\facade\Env;
+use think\Request;
 
 class Index extends BaseAdmin
 {
@@ -22,12 +24,20 @@ class Index extends BaseAdmin
         $salt = config('site.salt');
         $id_salt = config('site.id_salt');
         $api_key = config('site.api_key');
+        $front_tpl = config('site.tpl');
+        $payment = config('site.payment');
+
+        $back_end_page = config('page.back_end_page');
+        $booklist_pc_page = config('page.booklist_pc_page');
+        $booklist_mobile_page = config('page.booklist_mobile_page');
+
         $redis_host = config('cache.host');
         $redis_port = config('cache.port');
         $redis_auth = config('cache.password');
         $redis_prefix = config('cache.prefix');
-        $front_tpl = config('site.tpl');
-        $payment = config('site.payment');
+
+        $search_result_pc = config('page.search_result_pc');
+        $search_result_mobile = config('page.search_result_mobile');
 
         $this->assign([
             'site_name' => $site_name,
@@ -36,12 +46,17 @@ class Index extends BaseAdmin
             'salt' => $salt,
             'id_salt' => $id_salt,
             'api_key' => $api_key,
+            'front_tpl' => $front_tpl,
+            'payment' => $payment,
+            'back_end_page' => $back_end_page,
+            'booklist_pc_page' => $booklist_pc_page,
+            'booklist_mobile_page' => $booklist_mobile_page,
             'redis_host' => $redis_host,
             'redis_port' => $redis_port,
             'redis_auth' => $redis_auth,
             'redis_prefix' => $redis_prefix,
-            'front_tpl' => $front_tpl,
-            'payment' => $payment
+            'search_result_pc' => $search_result_pc,
+            'search_result_mobile' => $search_result_mobile
         ]);
         return view();
     }
@@ -54,10 +69,6 @@ class Index extends BaseAdmin
         $salt = input('salt');
         $id_salt = input('id_salt');
         $api_key = input('api_key');
-        $redis_host = input('redis_host');
-        $redis_port = input('redis_port');
-        $redis_auth = input('redis_auth');
-        $redis_prefix = input('redis_prefix');
         $front_tpl = input('front_tpl');
         $payment = input('payment');
         $site_code = <<<INFO
@@ -74,8 +85,17 @@ class Index extends BaseAdmin
         ];
 INFO;
         file_put_contents(App::getRootPath() . 'config/site.php', $site_code);
+        $this->success('修改成功', 'index', '', 1);
+    }
 
-        $cache_code = <<<INFO
+    public function redis()
+    {
+        if ($this->request->isPost()) {
+            $redis_host = input('redis_host');
+            $redis_port = input('redis_port');
+            $redis_auth = input('redis_auth');
+            $redis_prefix = input('redis_prefix');
+            $cache_code = <<<INFO
         <?php
         return [
             // 驱动方式
@@ -91,8 +111,32 @@ INFO;
             'expire' => 600,
         ];
 INFO;
-        file_put_contents(App::getRootPath() . 'config/cache.php', $cache_code);
-        $this->success('修改成功', 'index', '', 1);
+            file_put_contents(App::getRootPath() . 'config/cache.php', $cache_code);
+            $this->success('修改成功');
+        }
+    }
+
+    public function pagenum()
+    {
+        if ($this->request->isPost()) {
+            $back_end_page = input('back_end_page');
+            $booklist_pc_page = input('booklist_pc_page');
+            $booklist_mobile_page = input('booklist_mobile_page');
+            $search_result_mobile = input('search_result_mobile');
+            $search_result_pc = input('search_result_pc');
+            $code = <<<INFO
+        <?php
+        return [
+             'back_end_page' => {$back_end_page},
+            'booklist_pc_page' => {$booklist_pc_page},
+            'booklist_mobile_page' => {$booklist_mobile_page},
+            'search_result_pc' => {$search_result_pc},
+            'search_result_mobile' => {$search_result_mobile}
+        ];
+INFO;
+            file_put_contents(App::getRootPath() . 'config/page.php', $code);
+            $this->success('修改成功');
+        }
     }
 
     public function clearCache()
@@ -104,49 +148,40 @@ INFO;
         $this->success('清理缓存', 'index', '', 1);
     }
 
-    public function checkupdate()
+    public function kamiconfig(Request $request)
     {
-        $client = new Client();
-        $srcUrl = Env::get('root_path') . "/public/static/html/version.txt";
-        $localVersion = (int)str_replace('.', '', file_get_contents($srcUrl));
-        $server = "http://update.xhxcms.xyz";
-        $serverFileUrl = $server . "/public/static/html/version.txt";
-        $res = $client->request('GET', $serverFileUrl);
-        $serverVersion = (int)str_replace('.', '', $res->getBody());
-        $msg = array();
-        array_push($msg, '<p></p>');
-
-        if ($serverVersion > $localVersion) {
-            for ($i = $localVersion + 1; $i <= $serverVersion; $i++) {
-                $res = $client->request('GET', "http://config.xhxcms.xyz/" . $i . ".json");
-                if((int)($res->getStatusCode()) == 200)
-                {
-                    $json = json_decode($res->getBody(), true);
-
-                    foreach ($json['update'] as $value) {
-                        $data = $client->request('GET', $server . '/' . $value)->getBody(); //根据配置读取升级文件的内容
-                        $saveFileName = Env::get('root_path') . $value;
-                        $dir = dirname($saveFileName);
-                        if (!file_exists($dir)) {
-                            mkdir($dir, 0777,true);
-                        }
-                        file_put_contents($saveFileName, $data, true); //将内容写入到本地文件
-                        array_push($msg, '<p style="margin-left: 15px;color:blue">升级文件' . $value . '</p>');
-                    }
-                    foreach ($json['delete'] as $value) {
-                        $flag = unlink(Env::get('root_path') . '/' . $value);
-                        if ($flag) {
-                            array_push($msg, '<p style="margin-left: 15px;color:blue">删除文件' . $value . '</p>');
-                        } else {
-                            array_push($msg, '<p style="margin-left: 15px;color:darkred">删除文件失败</p>');
-                        }
-                    }
-                }
+        if ($request->isPost()) {
+            $data = $request->param();
+            $validate = new \app\admin\validate\Vipcode();
+            if ($validate->check($data)) {
+                $str = <<<INFO
+        <?php
+        return [
+            'salt' => 'salt',
+            'vipcode' => [
+                'day' => '{$data["vipcode_day"]}',
+                'num' => '{$data["vipcode_num"]}'
+            ],
+            'chargecode' => [
+                'money' => '{$data["chargecode_money"]}',
+                'num' => '{$data["chargecode_num"]}'
+            ]
+        ];
+INFO;
+                file_put_contents(App::getRootPath() . 'config/kami.php', $str);
+                $this->success('保存成功');
+            } else {
+                $this->error($validate->getError());
             }
-            array_push($msg, '<p style="margin-left:15px;">升级完成</p>');
         } else {
-            $msg = ['已经是最新版本！当前版本是' . $localVersion];
+            $this->assign([
+                'salt' => config('kami.salt'),
+                'vipcode_day' => config('kami.vipcode.day'),
+                'vipcode_num' => config('kami.vipcode.num'),
+                'chargecode_money' => config('kami.chargecode.money'),
+                'chargecode_num' => config('kami.chargecode.num')
+            ]);
+            return view();
         }
-        return implode('', $msg);
     }
 }

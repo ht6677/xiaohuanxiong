@@ -11,12 +11,15 @@
 
 use think\facade\Route;
 
+
 Route::rule('/tag/[:name]', 'index/tags/index');
 Route::rule('/book/:id', 'index/books/index');
 Route::rule('/booklist', 'index/books/booklist');
+Route::rule('/ajaxlist', 'index/books/ajaxlist');
 Route::rule('/chapter/:id-[:salt]', 'index/chapters/index');
 Route::rule('/search/[:keyword]', 'index/search');
 Route::rule('/rank', 'index/rank/index');
+Route::rule('/update', 'index/books/update');
 Route::rule('/author/:id', 'index/authors/index');
 
 Route::rule('/ucenter', 'ucenter/users/ucenter');
@@ -45,10 +48,13 @@ Route::rule('/charge', 'ucenter/finance/charge');
 Route::rule('/feedback', 'ucenter/finance/feedback');
 Route::rule('/buychapter', 'ucenter/finance/buychapter');
 Route::rule('/vip', 'ucenter/finance/vip');
+Route::rule('/kami', 'ucenter/finance/kami');
+Route::rule('/vipexchange', 'ucenter/finance/vipexchange');
 
 Route::rule('/zhapaynotify', 'api/zhapaynotify/index');
 Route::rule('/vkzfnotify', 'api/vkzfnotify/index');
 Route::rule('/xunhunotify', 'api/xunhunotify/index');
+Route::rule('/kakapaynotify','api/kakapaynotify/index');
 
 Route::rule('/login', 'ucenter/account/login');
 Route::rule('/register', 'ucenter/account/register');

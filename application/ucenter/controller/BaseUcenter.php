@@ -18,6 +18,7 @@ class BaseUcenter extends Controller
 {
     protected $tpl;
     protected $uid;
+    protected $prefix;
     protected $redis_prefix;
     protected $id_salt;
 
@@ -28,14 +29,22 @@ class BaseUcenter extends Controller
         if (is_null($this->uid)){
             $this->redirect(url('/login'));
         }
+
+        $vip_expire_time = session('vip_expire_time');
+        if (!empty($vip_expire_time)){
+            if($vip_expire_time - time() <= 0){ //计算出会员是否过期
+                session('xwx_vip_expire_time', null);
+            }
+        }
     }
 
     public function __construct(App $app = null)
     {
         parent::__construct($app);
         $this->redis_prefix = config('cache.prefix');
+        $this->prefix = config('database.prefix');
         $this->id_salt = config('site.id_salt');
-        $tpl_root = './template/'.config('site.tpl').'/ucenter/';
+        $tpl_root = './template/default/ucenter/';
         $controller = strtolower($this->request->controller());
         $action = strtolower($this->request->action());
         if ($this->request->isMobile()){

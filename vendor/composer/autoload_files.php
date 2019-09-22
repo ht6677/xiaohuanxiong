@@ -11,4 +11,5 @@ return array(
     'a0edc8309cc5e1d60e3047b5df6b7052' => $vendorDir . '/guzzlehttp/psr7/src/functions_include.php',
     '37a3dc5111fe8f707ab4c132ef1dbc62' => $vendorDir . '/guzzlehttp/guzzle/src/functions_include.php',
     '1cfd2761b63b0a29ed23657ea394cb2d' => $vendorDir . '/topthink/think-captcha/src/helper.php',
+    'ffc1d7141d4fcbaeb47a6929f0811ed1' => $vendorDir . '/topthink/think-worker/src/command.php',
 );

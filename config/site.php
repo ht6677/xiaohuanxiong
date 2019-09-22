@@ -1,11 +1,10 @@
         <?php
         return [
-            'url' => 'https://hm.com',
-            'img_site' => 'https://hm.com',
+            'url' => 'http://hm.com',
+            'img_site' => 'http://hm.com',
             'site_name' => '哈哈漫画',
-            'salt' => 'hanmantai',
-            'id_salt' => 'dddd',
-            'api_key' => 'hahahaha', 
+            'salt' => 'hm',
+            'api_key' => 'hehehe',   
             'tpl' => 'default',
-            'payment' => 'Vkzf'         
-        ];
+            'payment' => 'Vkzf'            
+            ];

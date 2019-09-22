@@ -84,11 +84,22 @@ class Authors extends BaseAdmin
     public function delete($id)
     {
         $author = Author::get($id);
+        if (empty($author)){
+            return ['err' => '1','msg' => '删除失败'];
+        }
         $books = $author->books;
         if (count($books) > 0){
             return ['err' => '1','msg' => '该作者名下还有作品，请先删除所有作品'];
         }
-        $author->delete();
-        return ['err' => '0','msg' => '删除成功'];
+        $result = $author->delete();
+        if ($result) {
+            return ['err' => '0','msg' => '删除成功'];
+        } else {
+            return ['err' => '1','msg' => '删除失败'];
+        }
+    }
+
+    public function deleteAll($ids){
+        Author::destroy($ids);
     }
 }

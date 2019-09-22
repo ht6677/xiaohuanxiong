@@ -14,7 +14,7 @@
             {volist name="list" id="item"}
             <li>
                 <div class="title"> {$item.title}</div>
-                {volist name="item['keyword']" id="keyword"}
+                {volist name="item['keyword']" id="keyword" length="14"}
                 {if $i == 1}
                 <div class="clearfix">
                     <div class="mh-item horizontal">

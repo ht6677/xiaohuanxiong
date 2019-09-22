@@ -35,7 +35,7 @@
             <div class="panel-body">
                 <div class="clearfix">
 							<span class="f-l">
-                                <a href="javascript:;" onclick="delAll()" class="btn btn-danger radius"><i
+                                <a href="javascript:;" onclick="delAll('请选择要删除的漫画','books')" class="btn btn-danger radius"><i
                                         class="Hui-iconfont">&#xe6e2;</i> 批量删除</a>
                                 <a class="btn btn-primary radius" onclick="editCreate('漫画新增','{:url(\'create\')}')"><i
                                         class="Hui-iconfont">&#xe600;</i> 添加漫画</a>
@@ -103,35 +103,5 @@
         </div>
     </article>
 </section>
-<script>
-    $('#cbx').click(function () {
-        var cbxs = $('.cbx');
-        var flag = $('#cbx').prop("checked");
-        $.each(cbxs, function (index, value) {
-            $(value).prop("checked", flag);
-        })
-    })
 
-    function delAll() {
-        var cbxs = $('.cbx:checked');
-        var arr = [];
-        $.each(cbxs, function (index, value) {
-            arr.push($(value).attr('data-val'));
-        })
-        if (arr.length <= 0) {
-            layer.msg('请选择要删除的漫画', {icon: 2});
-        } else {
-            $.ajax({
-                type:'post',
-                url: '/admin/books/deleteAll',
-                data: {ids: arr},
-                success(res){
-                    layer.msg('批量删除成功', {icon: 1, time: 1000}, function () {
-                        location.reload();
-                    });
-                }
-            })
-        }
-    }
-</script>
 {/block}

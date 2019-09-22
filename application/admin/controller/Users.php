@@ -134,18 +134,22 @@ class Users extends BaseAdmin
         return view();
     }
 
-    public function delete()
+    public function delete($id)
     {
-        $id = input('id');
-        if (empty($id) || is_null($id)) {
-            return ['status' => 0];
-        }
         $user = User::get($id);
+        if (empty($user)) {
+            return ['err' => '1', 'msg' => '删除失败'];
+        }
         $result = $user->delete(true);
         if ($result) {
             return ['err' => 0, 'msg' => '删除成功'];
         } else {
             return ['err' => 1, 'msg' => '删除失败'];
         }
+    }
+
+    public function deleteAll($ids)
+    {
+        User::destroy($ids);
     }
 }

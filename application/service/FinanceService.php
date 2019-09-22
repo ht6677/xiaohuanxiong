@@ -98,8 +98,9 @@ class FinanceService extends Controller
 
     public function getPagedOrders($where = '1=1')
     {
+        $page = config('page.back_end_page');
         $data = UserOrder::where($where)->order('id', 'desc');
-        $orders = $data->paginate(5, false,
+        $orders = $data->paginate($page, false,
             [
                 'query' => request()->param(),
                 'type' => 'util\AdminPage',
@@ -113,8 +114,9 @@ class FinanceService extends Controller
 
     public function getPagedFinance($where = '1=1')
     {
+        $page = config('page.back_end_page');
         $data = UserFinance::where($where)->order('id', 'desc');
-        $finances = $data->paginate(5, false,
+        $finances = $data->paginate($page, false,
             [
                 'query' => request()->param(),
                 'type' => 'util\AdminPage',
@@ -128,8 +130,9 @@ class FinanceService extends Controller
 
     public function getPagedBuyHistory()
     {
+        $page = config('page.back_end_page');
         $data = UserBuy::order('id', 'desc');
-        $buys = $data->paginate(5, false,
+        $buys = $data->paginate($page, false,
             [
                 'query' => request()->param(),
                 'type' => 'util\AdminPage',

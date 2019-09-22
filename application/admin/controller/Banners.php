@@ -108,4 +108,8 @@ class Banners extends BaseAdmin
             return ['err' => 1, 'msg' => '删除失败'];
         }
     }
+
+    public function deleteAll($ids){
+        BannerModel::destroy($ids);
+    }
 }

@@ -17,12 +17,17 @@
         <div class="panel mt-20">
             <div class="panel-body">
                 <div class="clearfix">
+                    <span class="f-l">
+                     <a href="javascript:;" onclick="delAll('请选择要删除的评论','comment')" class="btn btn-danger radius"><i
+                                        class="Hui-iconfont">&#xe6e2;</i> 批量删除</a>
+					</span>
                     <span class="f-r">共有数据：<strong>{$count}</strong> 条</span>
                 </div>
                 <div class="mt-20 clearfix">
                     <table class="table table-border table-bordered table-bg table-hover table-sort">
                         <thead>
                         <tr class="text-c">
+                            <th width="40"><input id="cbx" type="checkbox" value=""></th>
                             <th width="80">ID</th>
                             <th width="120">漫画</th>
                             <th width="120">用户名</th>
@@ -34,6 +39,7 @@
                         <tbody>
                         {volist name="comments" id="vo"}
                         <tr class="text-c">
+                            <td><input data-val="{$vo.id}" class="cbx" type="checkbox" value=""></td>
                             <td>{$vo.id}</td>
                             <td><a href="index?book_id={$vo.book.id}">{$vo.book.book_name}</a></td>
                             <td><a href="index?uid={$vo.user.id}">{$vo.user.username}</a></td>

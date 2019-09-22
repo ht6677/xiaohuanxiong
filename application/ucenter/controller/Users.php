@@ -92,6 +92,7 @@ class Users extends BaseUcenter
         if ($time > 0) {
             $day = ceil(($user->vip_expire_time - time()) / (60 * 60 * 24));
         }
+        session('xwx_vip_expire_time', $user->vip_expire_time); //在session里更新用户vip过期时间
         $this->assign([
             'balance' => $balance,
             'user' => $user,
@@ -179,7 +180,8 @@ class Users extends BaseUcenter
         if (!$validate->check($data)) {
             return ['msg' => '手机格式不正确'];
         }
-        $result = sendcode($this->uid, $phone, $code);
+        $sms = new \util\Sms();
+        $result = $sms->sendcode($this->uid, $phone, $code);
         if ($result['status'] == 0) { //如果发送成功
             session('xwx_sms_code', $code); //写入session
             session('xwx_cms_phone', $phone);

@@ -18,8 +18,9 @@ class TagsService
 
     public function getPagedAdmin($where = '1=1'){
         $data = Tags::where($where);
+        $page = config('page.back_end_page');
         $tags = $data->order('id','desc')
-            ->paginate(5,false,
+            ->paginate($page,false,
                 [
                     'query' => request()->param(),
                     'type'     => 'util\AdminPage',

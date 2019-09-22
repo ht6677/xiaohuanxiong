@@ -24,14 +24,17 @@ class AuthorService
         }
     }
 
-    public function getByName($name){
-        return Author::where('author_name','=',$name)->find();
+    public function getByName($name)
+    {
+        return Author::where('author_name', '=', $name)->find();
     }
 
-    public function getAuthors($where = '1=1'){
-        $authors = Author::where($where)->with('books')->paginate(5,false,[
+    public function getAuthors($where = '1=1')
+    {
+        $page = config('page.back_end_page');
+        $authors = Author::where($where)->with('books')->paginate($page, false, [
             'query' => request()->param(),
-            'type'     => 'util\AdminPage',
+            'type' => 'util\AdminPage',
             'var_page' => 'page',
         ]);
         foreach ($authors as &$author) {
@@ -43,15 +46,17 @@ class AuthorService
         ];
     }
 
-    public function getBooksByAuthor($author_name){
-        $author_id = Author::where('author_name','=',$author_name)->find()->id;
-        $data = Book::where('author_id','=',$author_id);
-        $books = $data->with('author')->paginate(5,false,
+    public function getBooksByAuthor($author_name)
+    {
+        $page = config('page.back_end_page');
+        $author_id = Author::where('author_name', '=', $author_name)->find()->id;
+        $data = Book::where('author_id', '=', $author_id);
+        $books = $data->with('author')->paginate($page, false,
             [
-                'type'     => 'util\AdminPage',
+                'type' => 'util\AdminPage',
                 'var_page' => 'page',
             ]);
-        foreach ($books as &$book){
+        foreach ($books as &$book) {
             $book['chapter_count'] = count($book->chapters);
         }
         return [
@@ -60,7 +65,8 @@ class AuthorService
         ];
     }
 
-    public function delete($array){
+    public function delete($array)
+    {
         Author::destroy($array);
     }
 }

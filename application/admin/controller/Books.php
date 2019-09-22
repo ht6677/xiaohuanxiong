@@ -204,8 +204,8 @@ class Books extends BaseAdmin
 
     public function delete($id)
     {
-        $book = Book::get($id);
-        $chapters = $book->chapters;
+        $book = Book::withTrashed()->find($id);
+        $chapters = Chapter::where('book_id', '=', $id)->select(); //按漫画id查找所有章节
         if (count($chapters) > 0) {
             return ['err' => 1, 'msg' => '该漫画下含有章节，请先删除所有章节'];
         }

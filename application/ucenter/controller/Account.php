@@ -23,7 +23,7 @@ class Account extends Controller
     public function __construct(App $app = null)
     {
         parent::__construct($app);
-        $tpl_root = Env::get('root_path') . '/public/template/' . config('site.tpl') . '/ucenter/';
+        $tpl_root = Env::get('root_path') . '/public/template/default/ucenter/';
         $controller = strtolower($this->request->controller());
         $action = strtolower($this->request->action());
         if ($this->request->isMobile()) {
@@ -110,7 +110,6 @@ class Account extends Controller
                     session('xwx_user_id', $user->id);
                     session('xwx_nick_name', $user->nick_name);
                     session('xwx_user_mobile', $user->mobile);
-                    session('xwx_user_level', $user->level);
                     session('xwx_vip_expire_time', $user->vip_expire_time);
                     return ['err' => 0, 'msg' => '登录成功'];
                 }
@@ -130,6 +129,9 @@ class Account extends Controller
     {
         session('xwx_user', null);
         session('xwx_user_id', null);
+        session('xwx_nick_name', null);
+                    session('xwx_user_mobile',null);
+                    session('xwx_vip_expire_time', null);
         $this->success('成功登出', '/login');
     }
 

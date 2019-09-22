@@ -9,14 +9,17 @@
 namespace app\service;
 
 use app\model\Admin;
+
 class AdminService
 {
-    public function GetAll(){
-        $data = Admin::order('id','desc');
-        $admins =  $data->paginate(5,false,
+    public function GetAll()
+    {
+        $data = Admin::order('id', 'desc');
+        $page = config('page.back_end_page');
+        $admins = $data->paginate($page, false,
             [
                 'query' => request()->param(),
-                'type'     => 'util\AdminPage',
+                'type' => 'util\AdminPage',
                 'var_page' => 'page',
             ]);
         return [

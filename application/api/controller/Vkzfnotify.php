@@ -6,7 +6,6 @@ namespace app\api\controller;
 use app\model\UserFinance;
 use app\model\UserOrder;
 use think\Controller;
-use think\facade\Cache;
 use think\Request;
 use util\Vkzf;
 use app\service\PromotionService;
@@ -47,7 +46,6 @@ class Vkzfnotify extends Controller
                     if ((int)$order->status == 0) { //如果是未完成订单，才进行更新
                         $order->status = $status;
                         $order->money = $para['money'];
-                        $order->pay_type = $type; //支付类型
                         $order->update_time = time(); //云端处理订单时间戳
                         $order->isupdate(true)->save(); //更新订单
 

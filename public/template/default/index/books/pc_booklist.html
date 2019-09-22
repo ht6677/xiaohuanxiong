@@ -44,7 +44,7 @@
 <section class="box container pb40 overflow-Show" style="min-height:400px;">
     <div class="box-body">
         <ul class="mh-list col7">
-            {volist name="books" id="vo" offset="0" length="35"}
+            {volist name="books" id="vo"}
             <li>
                 <div class="mh-item">
                     <a href="/book/{$id_salt}{$vo.id}" title="{$vo.book_name}">
@@ -78,7 +78,29 @@
     <footer>
         <div class="page-pagination mt20">
             <ul>
-                {$books|raw}
+                <div class="pagination">
+                    {if $page.total_page > 1}
+                        {if $page.current_page == 1}
+                        <li><a>&lt;</a></li>
+                        {else/}
+                        <li><a id="prevPage" href="/booklist?page={$page.current_page-1}{$param}" title="上一页">&lt;</a></li>
+                        {/if}
+
+                        {for start="1" end="$page.last_page + 1"}
+                            {if $i == $page.current_page }
+                            <li><a href="/booklist?page={$i}{$param}" class="active">{$i}</a></li>
+                            {else/}
+                            <li><a href="/booklist?page={$i}{$param}" title="第{$i}页">{$i}</a></li>
+                            {/if}
+                        {/for}
+
+                         {if $page.current_page == $page.last_page}
+                        <li><a>&gt;</a></li>
+                        {else/}
+                        <li><a id="nextPage" href="/booklist?page={$page.current_page+1}{$param}" title="下一页">&gt;</a></li>
+                        {/if}
+                    {/if}
+                </div>
             </ul>
         </div>
     </footer>

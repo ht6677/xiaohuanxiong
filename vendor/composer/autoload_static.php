@@ -12,11 +12,13 @@ class ComposerStaticInit663d55478ab4e9a8b8e65f4b48d2d666
         'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
         '1cfd2761b63b0a29ed23657ea394cb2d' => __DIR__ . '/..' . '/topthink/think-captcha/src/helper.php',
+        'ffc1d7141d4fcbaeb47a6929f0811ed1' => __DIR__ . '/..' . '/topthink/think-worker/src/command.php',
     );
 
     public static $prefixLengthsPsr4 = array (
         't' => 
         array (
+            'think\\worker\\' => 13,
             'think\\composer\\' => 15,
             'think\\captcha\\' => 14,
             'think\\' => 6,
@@ -24,6 +26,10 @@ class ComposerStaticInit663d55478ab4e9a8b8e65f4b48d2d666
         'a' => 
         array (
             'app\\' => 4,
+        ),
+        'W' => 
+        array (
+            'Workerman\\' => 10,
         ),
         'P' => 
         array (
@@ -34,10 +40,15 @@ class ComposerStaticInit663d55478ab4e9a8b8e65f4b48d2d666
             'GuzzleHttp\\Psr7\\' => 16,
             'GuzzleHttp\\Promise\\' => 19,
             'GuzzleHttp\\' => 11,
+            'GatewayWorker\\' => 14,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
+        'think\\worker\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/topthink/think-worker/src',
+        ),
         'think\\composer\\' => 
         array (
             0 => __DIR__ . '/..' . '/topthink/think-installer/src',
@@ -54,6 +65,10 @@ class ComposerStaticInit663d55478ab4e9a8b8e65f4b48d2d666
         array (
             0 => __DIR__ . '/../..' . '/application',
         ),
+        'Workerman\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/workerman/workerman',
+        ),
         'Psr\\Http\\Message\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/http-message/src',
@@ -69,6 +84,10 @@ class ComposerStaticInit663d55478ab4e9a8b8e65f4b48d2d666
         'GuzzleHttp\\' => 
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
+        ),
+        'GatewayWorker\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/workerman/gateway-worker/src',
         ),
     );
 
